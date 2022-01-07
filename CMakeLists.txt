@@ -21,3 +21,16 @@ if(APPLE)
 
     target_link_libraries(app "-framework Cocoa -framework IOKit")
 endif()
+
+if (WIN32)
+    set(SFML_PATH D:\\Projects\\c++\\libs\\SFML-2.5.1)
+
+    target_include_directories(app PUBLIC ${SFML_PATH}\\include)
+
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-main-d.lib)
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-graphics-d.lib)
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-network-d.lib)
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-system-d.lib)
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-window-d.lib)
+    target_link_libraries(app ${SFML_PATH}\\lib\\sfml-audio-d.lib)
+endif()
