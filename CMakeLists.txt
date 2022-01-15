@@ -23,7 +23,7 @@ if(APPLE)
 endif()
 
 if (WIN32)
-    set(SFML_PATH D:\\Projects\\c++\\libs\\SFML-2.5.1)
+    set(SFML_PATH D:\\Projects\\repos\\lib\\SFML-2.5.1)
 
     target_include_directories(app PUBLIC ${SFML_PATH}\\include)
 
