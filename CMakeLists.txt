@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.19)
 
 project(sfml_game VERSION 1.0.0)
 
-add_executable(app main.cpp)
+file(GLOB SOURCES *.h, *.cpp)
+
+add_executable(app main.cpp ${SOURCES})
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})

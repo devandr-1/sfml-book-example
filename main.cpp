@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "hero.h"
 
 sf::Vector2f viewSize(1024, 768);
 sf::VideoMode vm(viewSize.x, viewSize.y);
@@ -9,17 +10,13 @@ sf::RenderWindow window(vm, "Hello SFML", sf::Style::Default);
 sf::Texture skyTexture, bgTexture;
 sf::Sprite skySprite, bgSprite;
 
-sf::Texture heroTexture;
-sf::Sprite heroSprite;
-
-sf::Vector2f playerPosition;
-bool playerMoving = false;
+Hero hero;
 
 void draw()
 {
     window.draw(skySprite);
     window.draw(bgSprite);
-    window.draw(heroSprite);
+    window.draw(hero.getSprite());
 }
 
 void init()
@@ -30,10 +27,7 @@ void init()
     bgTexture.loadFromFile("assets/background.png");
     bgSprite.setTexture(bgTexture);
 
-    heroTexture.loadFromFile("assets/player_stand.png");
-    heroSprite.setTexture(heroTexture);
-    heroSprite.setPosition(sf::Vector2f(viewSize.x / 2, viewSize.y / 2));
-    heroSprite.setOrigin(heroTexture.getSize().x / 2, heroTexture.getSize().y / 2);
+    hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
 }
 
 void updateInput()
@@ -45,17 +39,17 @@ void updateInput()
             window.close();
         }
 
-        if (event.key.code == sf::Keyboard::D) {
-            playerMoving = event.type == sf::Event::KeyPressed;
+        if (event.key.code == sf::Keyboard::Space) {
+            if (event.type == sf::Event::KeyPressed) {
+                hero.jump(750.f);
+            }
         }
     }
 }
 
 void update(float dt)
 {
-    if (playerMoving) {
-        heroSprite.move(100.f * dt, 0);
-    }
+    hero.update(dt);
 }
 
 int main()
