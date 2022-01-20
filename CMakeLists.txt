@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.19)
 
 project(sfml_game VERSION 1.0.0)
 
+set(CMAKE_CXX_STANDARD 11)
+
 file(GLOB SOURCES *.h, *.cpp)
 
 add_executable(app main.cpp ${SOURCES})
