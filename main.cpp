@@ -77,7 +77,7 @@ void update(float dt)
         enemy->update(dt);
 
         if (enemy->getSprite().getPosition().x < 0) {
-            enemies.erase(enemies.begin() + 1);
+            enemies.erase(enemies.begin() + i);
             delete(enemy);
         }
     }
