@@ -23,6 +23,7 @@ float prevTime = 0.f;
 
 void spawnEnemy();
 void shoot();
+bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
 
 void draw()
 {
@@ -99,6 +100,21 @@ void update(float dt)
             delete(orion);
         }
     }
+
+    for (int i = 0; i < orions.size(); i++) {
+        for (int j = 0; j < enemies.size(); j++) {
+            Orion* orion = orions[i];
+            Enemy* enemy = enemies[j];
+
+            if (checkCollision(orion->getSprite(), enemy->getSprite())) {
+                orions.erase(orions.begin() + i);
+                delete(orion);
+
+                enemies.erase(enemies.begin() + j);
+                delete(enemy);
+            }
+        }
+    }
 }
 
 int main()
@@ -162,4 +178,13 @@ void shoot()
     orion->init("assets/orion.png", hero.getSprite().getPosition(), 400.f);
 
     orions.push_back(orion);
+}
+
+
+bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2)
+{
+    sf::FloatRect shape1 = sprite1.getGlobalBounds();
+    sf::FloatRect shape2 = sprite2.getGlobalBounds();
+
+    return shape1.intersects(shape2);
 }
