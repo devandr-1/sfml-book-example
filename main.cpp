@@ -4,6 +4,7 @@
 
 #include "hero.h"
 #include "enemy.h"
+#include "orion.h"
 
 sf::Vector2f viewSize(1024, 768);
 sf::VideoMode vm(viewSize.x, viewSize.y);
@@ -15,11 +16,13 @@ sf::Sprite skySprite, bgSprite;
 
 Hero hero;
 std::vector<Enemy*> enemies;
+std::vector<Orion*> orions;
 
 float currentTime;
 float prevTime = 0.f;
 
 void spawnEnemy();
+void shoot();
 
 void draw()
 {
@@ -29,6 +32,10 @@ void draw()
 
     for (Enemy* enemy : enemies) {
         window.draw(enemy->getSprite());
+    }
+
+    for (Orion* orion : orions) {
+        window.draw(orion->getSprite());
     }
 }
 
@@ -54,9 +61,10 @@ void updateInput()
             window.close();
         }
 
-        if (event.key.code == sf::Keyboard::Space) {
-            if (event.type == sf::Event::KeyPressed) {
-                hero.jump(750.f);
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Space: hero.jump(750.f); break;
+                case sf::Keyboard::Enter: shoot(); break;
             }
         }
     }
@@ -79,6 +87,16 @@ void update(float dt)
         if (enemy->getSprite().getPosition().x < 0) {
             enemies.erase(enemies.begin() + i);
             delete(enemy);
+        }
+    }
+
+    for (int i = 0; i < orions.size(); i++) {
+        Orion* orion = orions[i];
+        orion->update(dt);
+
+        if (orion->getSprite().getPosition().x > viewSize.x) {
+            orions.erase(orions.begin() + i);
+            delete(orion);
         }
     }
 }
@@ -136,4 +154,12 @@ void spawnEnemy()
     enemy->init("assets/zombie_skid.png", enemyPos, speed);
 
     enemies.push_back(enemy);
+}
+
+void shoot()
+{
+    Orion* orion = new Orion();
+    orion->init("assets/orion.png", hero.getSprite().getPosition(), 400.f);
+
+    orions.push_back(orion);
 }
