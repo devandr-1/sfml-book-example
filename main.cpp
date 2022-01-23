@@ -63,9 +63,11 @@ void updateInput()
         }
 
         if (event.type == sf::Event::KeyPressed) {
-            switch (event.key.code) {
-                case sf::Keyboard::Space: hero.jump(750.f); break;
-                case sf::Keyboard::Enter: shoot(); break;
+            if (event.key.code == sf::Keyboard::Space) {
+                hero.jump(750.f);
+            }
+            if (event.key.code == sf::Keyboard::Enter) {
+                shoot();
             }
         }
     }
