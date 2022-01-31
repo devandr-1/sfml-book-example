@@ -21,9 +21,16 @@ std::vector<Orion*> orions;
 float currentTime;
 float prevTime = 0.f;
 
+int score = 0;
+bool gameOver = true;
+
+sf::Font headingFont;
+sf::Text headingText;
+
 void spawnEnemy();
 void shoot();
 bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
+void reset();
 
 void draw()
 {
@@ -38,6 +45,10 @@ void draw()
     for (Orion* orion : orions) {
         window.draw(orion->getSprite());
     }
+
+    if (gameOver) {
+        window.draw(headingText);
+    }
 }
 
 void init()
@@ -47,6 +58,16 @@ void init()
 
     bgTexture.loadFromFile("assets/background.png");
     bgSprite.setTexture(bgTexture);
+
+    headingFont.loadFromFile("assets/fonts/SunnyspellsRegular-MV9ze.otf");
+    headingText.setFont(headingFont);
+    headingText.setString("Wrath of zombies");
+    headingText.setCharacterSize(84);
+    headingText.setFillColor(sf::Color::Red);
+
+    sf::FloatRect headingBounds = headingText.getLocalBounds();
+    headingText.setOrigin(headingBounds.width / 2, headingBounds.height / 2);
+    headingText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
 
     hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
 
@@ -67,7 +88,12 @@ void updateInput()
                 hero.jump(750.f);
             }
             if (event.key.code == sf::Keyboard::Enter) {
-                shoot();
+                if (gameOver) {
+                    gameOver = false;
+                    reset();
+                } else {
+                    shoot();
+                }
             }
         }
     }
@@ -90,6 +116,7 @@ void update(float dt)
         if (enemy->getSprite().getPosition().x < 0) {
             enemies.erase(enemies.begin() + i);
             delete(enemy);
+            gameOver = true;
         }
     }
 
@@ -109,6 +136,8 @@ void update(float dt)
             Enemy* enemy = enemies[j];
 
             if (checkCollision(orion->getSprite(), enemy->getSprite())) {
+                score++;
+
                 orions.erase(orions.begin() + i);
                 delete(orion);
 
@@ -130,7 +159,10 @@ int main()
         updateInput();
 
         sf::Time dt = clock.restart();
-        update(dt.asSeconds());
+
+        if (!gameOver) {
+            update(dt.asSeconds());
+        }
 
         window.clear(sf::Color::Red);
         draw();
@@ -189,4 +221,22 @@ bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2)
     sf::FloatRect shape2 = sprite2.getGlobalBounds();
 
     return shape1.intersects(shape2);
+}
+
+void reset()
+{
+    score = 0;
+    currentTime = 0.f;
+    prevTime = 0.f;
+
+    for (Enemy* enemy : enemies) {
+        delete(enemy);
+    }
+
+    for (Orion* orion : orions) {
+        delete(orion);
+    }
+
+    enemies.clear();
+    orions.clear();
 }
