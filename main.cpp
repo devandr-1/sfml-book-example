@@ -24,6 +24,9 @@ float prevTime = 0.f;
 int score = 0;
 bool gameOver = true;
 
+sf::Font headingFont;
+sf::Text headingText;
+
 void spawnEnemy();
 void shoot();
 bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
@@ -42,6 +45,10 @@ void draw()
     for (Orion* orion : orions) {
         window.draw(orion->getSprite());
     }
+
+    if (gameOver) {
+        window.draw(headingText);
+    }
 }
 
 void init()
@@ -51,6 +58,16 @@ void init()
 
     bgTexture.loadFromFile("assets/background.png");
     bgSprite.setTexture(bgTexture);
+
+    headingFont.loadFromFile("assets/fonts/SunnyspellsRegular-MV9ze.otf");
+    headingText.setFont(headingFont);
+    headingText.setString("Wrath of zombies");
+    headingText.setCharacterSize(84);
+    headingText.setFillColor(sf::Color::Red);
+
+    sf::FloatRect headingBounds = headingText.getLocalBounds();
+    headingText.setOrigin(headingBounds.width / 2, headingBounds.height / 2);
+    headingText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
 
     hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
 
