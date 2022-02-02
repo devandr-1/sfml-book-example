@@ -30,6 +30,8 @@ sf::Text headingText;
 sf::Font scoreFont;
 sf::Text scoreText;
 
+sf::Text tutorialText;
+
 void spawnEnemy();
 void shoot();
 bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
@@ -51,6 +53,7 @@ void draw()
 
     if (gameOver) {
         window.draw(headingText);
+        window.draw(tutorialText);
     } else {
         window.draw(scoreText);
     }
@@ -83,6 +86,15 @@ void init()
     sf::FloatRect scoreBounds = scoreText.getLocalBounds();
     scoreText.setOrigin(scoreBounds.width / 2, scoreBounds.height / 2);
     scoreText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
+
+    tutorialText.setFont(scoreFont);
+    tutorialText.setString("Press Enter to Fire and Start Game, Space to Jump");
+    tutorialText.setCharacterSize(35);
+    tutorialText.setFillColor(sf::Color::Red);
+
+    sf::FloatRect tutorialBounds = tutorialText.getLocalBounds();
+    tutorialText.setOrigin(tutorialBounds.width / 2, tutorialBounds.height / 2);
+    tutorialText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .2f));
 
     hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
 
