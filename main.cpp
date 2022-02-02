@@ -27,6 +27,9 @@ bool gameOver = true;
 sf::Font headingFont;
 sf::Text headingText;
 
+sf::Font scoreFont;
+sf::Text scoreText;
+
 void spawnEnemy();
 void shoot();
 bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
@@ -48,6 +51,8 @@ void draw()
 
     if (gameOver) {
         window.draw(headingText);
+    } else {
+        window.draw(scoreText);
     }
 }
 
@@ -68,6 +73,16 @@ void init()
     sf::FloatRect headingBounds = headingText.getLocalBounds();
     headingText.setOrigin(headingBounds.width / 2, headingBounds.height / 2);
     headingText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
+
+    scoreFont.loadFromFile("assets/fonts/Geometria-Medium.ttf");
+    scoreText.setFont(scoreFont);
+    scoreText.setString("Score: 0");
+    scoreText.setCharacterSize(45);
+    scoreText.setFillColor(sf::Color::Red);
+
+    sf::FloatRect scoreBounds = scoreText.getLocalBounds();
+    scoreText.setOrigin(scoreBounds.width / 2, scoreBounds.height / 2);
+    scoreText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
 
     hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
 
@@ -137,6 +152,12 @@ void update(float dt)
 
             if (checkCollision(orion->getSprite(), enemy->getSprite())) {
                 score++;
+
+                std::string finalScore = "Score: " + std::to_string(score);
+                scoreText.setString(finalScore);
+                sf::FloatRect scoreBounds = scoreText.getLocalBounds();
+                scoreText.setOrigin(scoreBounds.width / 2, scoreBounds.height / 2);
+                scoreText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .1f));
 
                 orions.erase(orions.begin() + i);
                 delete(orion);
@@ -228,6 +249,7 @@ void reset()
     score = 0;
     currentTime = 0.f;
     prevTime = 0.f;
+    scoreText.setString("Score: 0");
 
     for (Enemy* enemy : enemies) {
         delete(enemy);
