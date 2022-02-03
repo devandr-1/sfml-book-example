@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 
 #include "hero.h"
@@ -32,32 +33,20 @@ sf::Text scoreText;
 
 sf::Text tutorialText;
 
+sf::Music bgMusic;
+
+sf::SoundBuffer fireBuffer;
+sf::SoundBuffer hitBuffer;
+sf::SoundBuffer gameOverBuffer;
+
+sf::Sound fireSound(fireBuffer);
+sf::Sound hitSound(hitBuffer);
+sf::Sound gameOverSound(gameOverBuffer);
+
 void spawnEnemy();
 void shoot();
 bool checkCollision(sf::Sprite sprite1, sf::Sprite sprite2);
 void reset();
-
-void draw()
-{
-    window.draw(skySprite);
-    window.draw(bgSprite);
-    window.draw(hero.getSprite());
-
-    for (Enemy* enemy : enemies) {
-        window.draw(enemy->getSprite());
-    }
-
-    for (Orion* orion : orions) {
-        window.draw(orion->getSprite());
-    }
-
-    if (gameOver) {
-        window.draw(headingText);
-        window.draw(tutorialText);
-    } else {
-        window.draw(scoreText);
-    }
-}
 
 void init()
 {
@@ -66,6 +55,10 @@ void init()
 
     bgTexture.loadFromFile("assets/background.png");
     bgSprite.setTexture(bgTexture);
+
+    hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
+
+    srand((int)time(0));
 
     headingFont.loadFromFile("assets/fonts/SunnyspellsRegular-MV9ze.otf");
     headingText.setFont(headingFont);
@@ -96,9 +89,13 @@ void init()
     tutorialText.setOrigin(tutorialBounds.width / 2, tutorialBounds.height / 2);
     tutorialText.setPosition(sf::Vector2f(viewSize.x * .5f, viewSize.y * .2f));
 
-    hero.init("assets/player_stand.png", sf::Vector2f(viewSize.x * .25f, viewSize.y * .5f), 200.f);
+    bgMusic.openFromFile("assets/sounds/sound-track.wav");
+    bgMusic.setLoop(true);
+    bgMusic.play();
 
-    srand((int)time(0));
+    hitBuffer.loadFromFile("assets/sounds/hit.wav");
+    fireBuffer.loadFromFile("assets/sounds/knife-throw.wav");
+    gameOverBuffer.loadFromFile("assets/sounds/game-over.wav");
 }
 
 void updateInput()
@@ -144,6 +141,7 @@ void update(float dt)
             enemies.erase(enemies.begin() + i);
             delete(enemy);
             gameOver = true;
+            gameOverSound.play();
         }
     }
 
@@ -163,6 +161,7 @@ void update(float dt)
             Enemy* enemy = enemies[j];
 
             if (checkCollision(orion->getSprite(), enemy->getSprite())) {
+                hitSound.play();
                 score++;
 
                 std::string finalScore = "Score: " + std::to_string(score);
@@ -178,6 +177,28 @@ void update(float dt)
                 delete(enemy);
             }
         }
+    }
+}
+
+void draw()
+{
+    window.draw(skySprite);
+    window.draw(bgSprite);
+    window.draw(hero.getSprite());
+
+    for (Enemy* enemy : enemies) {
+        window.draw(enemy->getSprite());
+    }
+
+    for (Orion* orion : orions) {
+        window.draw(orion->getSprite());
+    }
+
+    if (gameOver) {
+        window.draw(headingText);
+        window.draw(tutorialText);
+    } else {
+        window.draw(scoreText);
     }
 }
 
@@ -245,6 +266,8 @@ void shoot()
     orion->init("assets/orion.png", hero.getSprite().getPosition(), 400.f);
 
     orions.push_back(orion);
+
+    fireSound.play();
 }
 
 
